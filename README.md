@@ -1,540 +1,152 @@
-# Bytecrackers Project - Classified Document Integrity & Clearance Verification Platform
+# Classified Document Integrity and Clearance Verification
 
-A secure web-based platform for verifying document integrity using cryptographic hashing and managing multi-level clearance-based access control with blockchain-style immutable audit logging.
+Secure document handling with encrypted storage, integrity verification, clearance-based access, and a hash-chained audit ledger.
 
-**One-Line Summary:**  
-*"We upgraded the system to store documents off-chain while maintaining on-chain cryptographic hashes, clearance verification, and immutable audit records, transforming it into a Classified Document Integrity & Clearance Verification Platform."*
+## What this does
 
----
+- Encrypts and stores uploaded documents off-chain on disk.
+- Registers SHA-256 hashes to detect tampering.
+- Enforces clearance levels for access and downloads.
+- Records every action in an immutable, hash-chained audit ledger.
+- Offers optional AI-assisted access and threat summaries via Gemini.
 
-## 📋 Overview
+## Tech stack
 
-This platform implements an advanced document verification system that ensures the integrity of classified documents through **off-chain storage** and **on-chain cryptographic fingerprints**. It features a sophisticated clearance verification system and maintains an immutable blockchain-style audit ledger of all access attempts.
+- Node.js 18
+- Express 5
+- MySQL 8 (or compatible)
+- JWT authentication
+- AES-256-GCM encryption for documents
 
-The system has been upgraded from a basic verification tool to a production-grade platform demonstrating:
-- ✅ Off-chain encrypted document storage
-- ✅ On-chain cryptographic fingerprints (SHA-256)
-- ✅ Multi-level clearance verification system
-- ✅ Blockchain-style immutable audit ledger with hash chaining
-- ✅ Approval ID system for access tracking
-- ✅ Privacy by design - no sensitive data on-chain
-
----
-
-## ✨ Key Features
-
-### 🔐 Document Integrity Verification
-- **Off-Chain Storage**: Documents stored securely in encrypted off-chain storage
-- **On-Chain Fingerprints**: Only SHA-256 cryptographic hashes stored on-chain
-- **Tamper Detection**: Automatic detection of any document modifications
-- **Document Registry**: Centralized registry with metadata tracking
-- **Status Tracking**: REGISTERED, VERIFIED, or COMPROMISED status
-
-### 👤 Multi-Level Clearance Verification
-- **Clearance Levels**: 
-  - **Level 3**: Admin (Full Access)
-  - **Level 2**: Officer (Document Access)
-  - **Level 1**: Auditor (Limited Access)
-- **Dynamic Authorization**: Real-time clearance verification against document requirements
-- **Approval System**: Unique approval IDs for granted access attempts
-- **Clearance Validation**: Configurable document clearance requirements
-
-### 📊 Blockchain-Style Audit Ledger
-- **Immutable Records**: Append-only audit trail with cryptographic chaining
-- **Block Hashing**: Each record contains previous block hash → current block hash
-- **Hash Chaining**: Prevents retroactive modification of audit records
-- **Comprehensive Logging**: Timestamps, user roles, clearance levels, and approval IDs
-- **Traceability**: Complete audit trail of all system interactions
-
-### 🔒 Privacy & Security
-- **Documents never leave secure off-chain storage**
-- **Only cryptographic hashes stored on-chain**
-- **No sensitive content exposed**
-- **All access traceable and immutable**
-- **Encrypted storage locations**
-
----
-
-## 🛠️ Technologies Used
-
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework (v5.2.1)
-- **Crypto (SHA-256)** - Cryptographic hashing for document fingerprints
-- **JSON Blockchain** - Simulated blockchain with hash chaining
-- **HTML/CSS/JavaScript** - Modern, responsive frontend
-
----
-
-## 📁 Project Structure
+## Project layout
 
 ```
-Bytecrackers_Project/
-├── Documentation/          # Project documentation
-├── Screenshots/            # Application screenshots
-├── Web_Backend/           # Main application directory
-│   ├── server.js          # Express server with 4 API endpoints
-│   ├── access.js          # Clearance verification logic
-│   ├── verify.js          # Integrity verification logic
-│   ├── index.html         # Enhanced web interface
-│   ├── users.json         # User profiles with clearance levels
-│   ├── on_chain_audit_ledger.json      # Immutable audit blockchain
-│   ├── document_fingerprint_registry.json  # Document hash registry
-│   ├── secure_storage/    # Off-chain document storage (encrypted)
-│   └── package.json       # Node.js dependencies
-├── README.md              # This file
-└── UPGRADE_SUMMARY.md     # Detailed upgrade documentation
+Documentation/
+Screenshots/
+Web_Backend/
+  server.js
+  config.js
+  schema.sql
+  routes/
+  services/
+  middleware/
+  secure_storage/
 ```
 
----
-
-## 🚀 Installation & Setup
+## Setup
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm (Node Package Manager)
+- Node.js 18.x
+- MySQL 8.x
 
-### Setup Steps
-
-1. **Navigate to the Web_Backend directory:**
-   ```bash
-   cd Web_Backend
-   ```
-
-2. **Configure environment variables:**
-   - Copy `.env.example` to `.env`
-   - Fill in `JWT_SECRET`, `JWT_REFRESH_SECRET`, and `ENCRYPTION_KEY`
-   - Set Postgres connection values (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`) or `DATABASE_URL`
-
-3. **Initialize Postgres schema:**
-   - Create the database (example: `cdi_platform`)
-   - Run the SQL in `schema.sql` to create tables
-
-4. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-5. **Start the server:**
-   ```bash
-   node server.js
-   ```
-
-6. **Bootstrap the first admin:**
-   - Use `POST /auth/bootstrap` once to create the initial admin account
-
-7. **Access the platform:**
-   ```
-   http://localhost:3000
-   ```
-
-### Testing the System
-
-1. **Test Integrity Verification:**
-   - Click "Verify Document Integrity"
-   - Document will be registered with SHA-256 hash
-   - Subsequent clicks will verify hash hasn't changed
-
-2. **Test Clearance Levels:**
-   - Try Admin (Level 3) → Should be granted
-   - Try Officer (Level 2) → Should be granted
-   - Try Auditor (Level 1) → Should be denied
-   - Notice the Approval IDs generated
-
-3. **View Blockchain:**
-   - Click "View Immutable Audit Trail"
-   - See hash chaining with previousHash → currentHash
-   - Observe immutable record of all actions
-
-4. **View Registry:**
-   - Click "View Document Registry"
-   - See all registered documents with metadata
-
----
-
-## 💻 Usage Guide
-
-### Web Interface Features
-
-The enhanced web interface provides six main operations organized by function:
-
-#### 🔑 Integrity Verification Section
-1. **Verify Document Integrity** - Checks cryptographic hash against registry
-2. **View Document Registry** - Shows all registered document fingerprints with metadata
-
-#### 👤 Clearance Verification Section
-3. **Admin Access (Level 3)** - Tests highest clearance level access
-4. **Officer Access (Level 2)** - Tests standard document access
-5. **Auditor Access (Level 1)** - Tests limited clearance access
-
-#### 📊 Audit Section
-6. **View Immutable Audit Trail** - Displays blockchain-style audit ledger with hash chaining
-
----
-
-## 🔌 API Endpoints
-
-### Authentication
-```
-POST /auth/bootstrap
-POST /auth/login
-POST /auth/refresh
-POST /auth/logout
-POST /auth/users
-```
-
-Bootstrap is allowed only once to create the first admin.
-
----
-
-### Documents
-```
-POST /documents/upload
-GET /documents
-GET /documents/:id
-POST /documents/:id/verify
-GET /documents/:id/download
-```
-
-Uploads are encrypted at rest. Verification recomputes SHA-256 hashes from decrypted content.
-
----
-
-### Access Requests
-```
-POST /access/request
-```
-
-Evaluates clearance against document requirements and returns an approval ID.
-
----
-
-### Audit Ledger
-```
-GET /audit/ledger
-GET /audit/verify
-```
-
-Ledger entries are hash-chained and can be validated via the verify endpoint.
-
----
-
-## 🔐 System Architecture
-
-### Data Flow
+### 1) Install dependencies
 
 ```
-1. Document Stored Off-Chain
-   └─> Encrypted in ./secure_storage/
-   
-2. SHA-256 Hash Generated
-   └─> Cryptographic fingerprint created
-   
-3. Hash Stored On-Chain
-   └─> Registered in document_fingerprint_registry.json
-   
-4. User Requests Access
-   └─> Clearance level checked
-   
-5. Authorization Granted/Denied
-   └─> Approval ID generated if granted
-   
-6. Integrity Verified
-   └─> Hash comparison performed
-   
-7. Immutable Log Created
-   └─> Block added to audit ledger with previous hash
-```
-
-### System Architecture Diagram
-
-```
-┌─────────────────────────────────────────┐
-│  User Request (Web Interface)           │
-└───────────────┬─────────────────────────┘
-                │
-┌───────────────▼─────────────────────────┐
-│  Express Server (4 Endpoints)           │
-│  - /verify (Integrity Check)            │
-│  - /access/:user (Clearance Check)      │
-│  - /audit-ledger (View Blockchain)      │
-│  - /registry (View Fingerprints)        │
-└───────────┬─────────────────────────────┘
-            │
-    ┌───────┴────────┐
-    │                │
-┌───▼───────┐   ┌───▼──────────────┐
-│ OFF-CHAIN │   │    ON-CHAIN      │
-│           │   │                  │
-│ Documents │   │ • Hash Registry  │
-│ (Encrypted│   │ • Audit Ledger   │
-│  Storage) │   │ • Approvals      │
-│           │   │ • Clearances     │
-└───────────┘   └──────────────────┘
-```
-
-### Security Model
-
-**Off-Chain Components:**
-- Actual documents (encrypted)
-- Secure storage infrastructure
-- Sensitive content protected
-
-**On-Chain Components:**
-- Document fingerprints (SHA-256 hashes)
-- Audit ledger (blockchain-style)
-- Access approval records
-- Clearance verification logs
-- Hash chains for immutability
-
----
-
-## 📝 Configuration
-
-### User Clearance Levels
-
-Edit `users.json` to manage users and clearance levels:
-
-```json
-{
-  "username": {
-    "role": "OFFICER",
-    "clearanceLevel": 2
-  }
-}
-```
-
-**Clearance Level Guidelines:**
-- **Level 3**: Full system access (Admin)
-- **Level 2**: Document access (Officer, Manager)
-- **Level 1**: Limited access (Auditor, Guest)
-
-### Document Security Settings
-
-In `access.js`, configure:
-```javascript
-const DOCUMENT_REQUIRED_CLEARANCE = 2;  // Minimum clearance needed
-const DOCUMENT_STORAGE_PATH = "./secure_storage/";  // Off-chain storage
-```
-
----
-
-## 🎯 Key Differentiators
-
-### ✅ What Makes This Platform Unique
-
-1. **True Off-Chain Storage**: Documents never exposed to blockchain
-2. **Cryptographic Fingerprints**: Only hashes stored on-chain
-3. **Multi-Level Clearance**: Not just roles, but graduated clearance levels
-4. **Approval System**: Unique approval IDs for audit compliance
-5. **Hash-Chained Ledger**: Each block references previous block hash
-6. **Privacy by Design**: Sensitive content never leaves secure storage
-
-### 📊 Blockchain Implementation
-
-Our audit ledger uses blockchain principles:
-- **Immutability**: Append-only structure
-- **Chaining**: Each block contains previous block hash
-- **Timestamping**: Chronological record keeping
-- **Transparency**: Full audit trail visibility
-- **Verification**: Hash-based integrity checking
-
-### 🔒 Privacy Guarantees
-
-#### What Gets Stored On-Chain
-✅ SHA-256 document hashes  
-✅ Access attempt records  
-✅ Approval IDs  
-✅ Clearance levels  
-✅ Timestamps  
-
-#### What Stays Off-Chain
-❌ Actual documents  
-❌ Document content  
-❌ Sensitive information  
-❌ Personal data beyond username/role  
-
----
-
-## 🌍 Real-World Applications
-
-This platform is ideal for organizations handling highly sensitive information, such as:
-
-### 🏛️ Government & Defense Departments
-- Secure storage and verification of classified documents
-- Enforcing security clearance requirements
-- Maintaining audit trails for compliance
-- Protecting state secrets and sensitive intelligence
-
-### 🏥 Healthcare Systems
-- HIPAA-compliant document management
-- Patient record verification and integrity
-- Access control based on medical clearance levels
-- Audit trails for medical record access
-
-### ⚖️ Legal Institutions
-- Secure management of confidential case documents
-- Verification of document authenticity in legal proceedings
-- Access control for attorney-client privileged information
-- Immutable audit records for legal compliance
-
-### 💰 Financial & Compliance-Driven Organizations
-- Secure storage of confidential financial records
-- SOX and regulatory compliance documentation
-- Multi-level access control for sensitive financial data
-- Tamper-proof audit trails for regulatory audits
-
-### 🎯 Key Organizational Benefits
-
-This platform enables organizations to:
-
-✅ **Prove Document Authenticity & Integrity**
-- Cryptographic proof that documents haven't been altered
-- SHA-256 fingerprints serve as digital signatures
-- Irrefutable evidence in legal/compliance contexts
-
-✅ **Enforce Strict Clearance-Based Access**
-- Multi-level clearance system (Level 1-3)
-- Only authorized personnel can access classified documents
-- Dynamic clearance verification for each access attempt
-
-✅ **Maintain Permanent, Tamper-Proof Audit Records**
-- Blockchain-style immutable ledger
-- Hash chaining prevents retroactive modifications
-- Complete traceability of all access attempts
-- Forensic analysis capabilities
-
-✅ **Preserve Privacy While Ensuring Transparency**
-- Documents remain off-chain in secure storage
-- Only cryptographic hashes exposed on-chain
-- No sensitive content in audit logs
-- Full transparency to authorized auditors
-
----
-
-## 📊 Technical Upgrades Summary
-
-### What Changed (Before → After)
-
-| Feature | Before | After |
-|---------|--------|-------|
-| **Storage** | Mixed documents + hashes | Off-chain docs, on-chain hashes |
-| **Access Control** | Role-based (OFFICER/AUDITOR) | Multi-level clearance (1-3) |
-| **Audit Log** | Text file `blockchain_log.txt` | JSON blockchain `on_chain_audit_ledger.json` |
-| **Hash Storage** | Single file `hash.txt` | Registry `document_fingerprint_registry.json` |
-| **Log Format** | Timestamp + message | Blocks with hash chaining |
-| **Approval System** | None | Unique Approval IDs (APR-XXXX) |
-| **API Endpoints** | 2 | 4 (verify, access, audit-ledger, registry) |
-| **Web Interface** | 3 buttons | 6 interactive sections |
-| **Privacy** | Basic | Privacy by Design (off-chain/on-chain separation) |
-
-### Files Modified
-
-| File | Changes |
-|------|---------|
-| `access.js` | ✅ Clearance system, approval IDs, blockchain ledger |
-| `verify.js` | ✅ Document registry, off-chain storage, enhanced output |
-| `server.js` | ✅ 4 API endpoints, enhanced logging |
-| `index.html` | ✅ Modern UI, 6 sections, privacy notice |
-| `users.json` | ✅ Clearance levels added |
-| `README.md` | ✅ Comprehensive documentation |
-
-### New Files Generated
-
-- `on_chain_audit_ledger.json` - Immutable blockchain ledger
-- `document_fingerprint_registry.json` - Document metadata registry
-- `secure_storage/` - Off-chain document storage directory
-
----
-
-## 🚀 Demo & Testing Tips
-
-### For Presentations
-
-1. **When explaining blockchain:**
-   - Show `on_chain_audit_ledger.json`
-   - Point out `previousHash` → `currentHash` chaining
-   - Explain immutability with example
-
-2. **When explaining privacy:**
-   - Show that documents are in `secure_storage/`
-   - Show only hashes in registry
-   - Emphasize off-chain/on-chain separation
-   - Highlight that actual documents never leave secure storage
-
-3. **When explaining clearance:**
-   - Show `users.json` with clearance levels
-   - Demonstrate officer (approved) vs auditor (denied)
-   - Show approval ID generation
-   - Explain dynamic clearance verification
-
-4. **When comparing to title:**
-   - ✅ **Classified Document** → Off-chain storage
-   - ✅ **Integrity** → Cryptographic hashing
-   - ✅ **Clearance Verification** → Multi-level system
-   - ✅ **Platform** → Complete web-based solution
-
-### Quick Test Sequence
-
-```bash
-# 1. Start server
 cd Web_Backend
-node server.js
-
-# 2. In browser, visit http://localhost:3000
-# 3. Click "Verify Document Integrity" (registers document)
-# 4. Click "Officer Access (Level 2)" (should be granted)
-# 5. Click "Auditor Access (Level 1)" (should be denied)
-# 6. Click "View Immutable Audit Trail" (see blockchain)
-# 7. Click "View Document Registry" (see metadata)
+npm install
 ```
 
----
+### 2) Configure environment variables
 
-## 🤝 Academic & Project Review
+Create a `.env` file in `Web_Backend/`:
 
-### Cybersecurity Concepts Covered
-- ✅ Cryptographic Hash Functions (SHA-256)
-- ✅ Blockchain Technology (Immutable Ledger)
-- ✅ Access Control (Multi-Level Clearance)
-- ✅ Privacy by Design (Off-Chain Storage)
-- ✅ Audit Trail (Blockchain-Style Logging)
-- ✅ Authentication & Authorization
-- ✅ Data Integrity Verification
-- ✅ Privacy-Preserving Technologies
+```
+PORT=3000
+JWT_SECRET=your_access_token_secret
+JWT_REFRESH_SECRET=your_refresh_token_secret
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+ENCRYPTION_KEY=base64_or_64_hex_chars_key
 
-### Matches Syllabus Requirements
-- ✅ Encryption & Hashing
-- ✅ Blockchain & Distributed Ledgers
-- ✅ Access Control Systems
-- ✅ Privacy & Security
-- ✅ Audit & Compliance
-- ✅ System Architecture
-- ✅ Web Application Security
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=cdi_platform
+DB_USER=root
+DB_PASSWORD=your_password
 
----
+# Optional (enables AI responses)
+GEMINI_API_KEY=your_gemini_key
+GEMINI_MODEL=gemini-1.5-flash
+```
 
-## 📄 License
+Notes:
+- `ENCRYPTION_KEY` must be 32 bytes. Use either 64 hex characters or base64-encoded 32 bytes.
+- If `GEMINI_API_KEY` is not set, the app falls back to rule-based responses.
 
-This project is part of the Bytecrackers initiative.
+### 3) Initialize the database
 
----
+Create the database and run the schema:
 
-## 📧 Contact
+```
+CREATE DATABASE cdi_platform;
+USE cdi_platform;
+SOURCE schema.sql;
+```
 
-For questions or support regarding this platform, please refer to the project documentation or contact the Bytecrackers team.
+### 4) Start the server
 
----
+```
+npm start
+```
 
-## 🏆 Final Notes
+The server runs at `http://localhost:3000`.
 
-**This platform now:**
-- ✅ Demonstrates production-grade security concepts
-- ✅ Implements blockchain principles correctly
-- ✅ Ensures privacy through off-chain/on-chain separation
-- ✅ Provides multi-level access control
-- ✅ Maintains immutable audit records
-- ✅ Offers a complete, user-friendly solution
-- ✅ Ready for academic review, demo, or deployment
+## Default admin
 
-**Security Note**: This system demonstrates production-grade concepts including off-chain document storage, on-chain cryptographic verification, clearance-based authorization, and immutable audit logging. For deployment in sensitive environments, additional hardening should include HTTPS, database integration, key management systems, and compliance certifications.
+On first start, a default admin is seeded if no admin exists:
+
+- Username: `admin`
+- Password: `admin12345678`
+- Role: `TOP_SECRET` (clearance level 5)
+
+Change this immediately in production.
+
+## Core API endpoints
+
+Auth:
+- `POST /auth/login`
+- `POST /auth/refresh`
+- `POST /auth/logout`
+- `POST /auth/users` (requires `TOP_SECRET`)
+
+Documents:
+- `POST /documents/upload` (multipart form field: `document`)
+- `GET /documents`
+- `GET /documents/:id`
+- `POST /documents/:id/verify`
+- `GET /documents/:id/download`
+
+Access control:
+- `POST /access/request`
+
+Audit ledger:
+- `GET /audit/ledger`
+- `GET /audit/verify` (requires `TOP_SECRET`)
+
+AI utilities:
+- `POST /chat` (access questions and document metadata)
+- `GET /threats/summary`
+
+## Clearance levels
+
+Roles map to numeric clearance levels:
+
+- `UNCLASSIFIED` -> 1
+- `RESTRICTED` -> 2
+- `CONFIDENTIAL` -> 3
+- `SECRET` -> 4
+- `TOP_SECRET` -> 5
+
+A user can access a document if `clearanceLevel >= required_clearance`.
+
+## Security notes
+
+- Documents are encrypted at rest in `Web_Backend/secure_storage/`.
+- Hashes are recalculated on verification to detect tampering.
+- Audit ledger entries are hash-chained to detect modification.
+
+## Useful checks
+
+- `GET /health` for a quick server health check.
+- If uploads fail, verify `ENCRYPTION_KEY` and `ALLOWED_MIME_TYPES` in the environment.
