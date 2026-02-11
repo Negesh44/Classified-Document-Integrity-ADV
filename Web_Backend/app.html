@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Document Platform - Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #0b1220;
+        --slate: #23324a;
+        --muted: #5b6b82;
+        --border: #d8e1ef;
+        --paper: #f5f7fb;
+        --white: #ffffff;
+        --primary: #1d4ed8;
+        --primary-dark: #1e3a8a;
+        --accent: #0f766e;
+        --gold: #c7922b;
+        --shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+        --radius-lg: 20px;
+        --radius-md: 12px;
+        --radius-sm: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Source Sans 3", sans-serif;
+        background-image:
+          radial-gradient(circle at 10% 10%, rgba(29, 78, 216, 0.1), transparent 35%),
+          radial-gradient(circle at 80% 20%, rgba(15, 118, 110, 0.12), transparent 40%),
+          linear-gradient(135deg, #f8fafc 0%, #eef2ff 55%, #ffffff 100%);
+        color: var(--ink);
+        min-height: 100vh;
+        animation: fadeIn 0.8s ease forwards;
+      }
+
+      .page {
+        max-width: 1220px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+        position: relative;
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        top: -120px;
+        right: -120px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(29, 78, 216, 0.12), transparent 70%);
+        border-radius: 999px;
+        z-index: 0;
+        animation: floatGlow 10s ease-in-out infinite;
+      }
+
+      header.topbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 1;
+        animation: riseIn 0.7s ease forwards;
+      }
+
+      .title-block {
+        display: grid;
+        gap: 8px;
+      }
+
+      .eyebrow {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      h1 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2rem, 4vw, 2.7rem);
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        max-width: 720px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: var(--radius-md);
+        border: none;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(29, 78, 216, 0.18);
+        filter: saturate(1.05);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 12px rgba(29, 78, 216, 0.16);
+      }
+
+      .btn.secondary {
+        background: linear-gradient(135deg, var(--accent), #0d9488);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border: 1px solid rgba(35, 50, 74, 0.18);
+        color: var(--slate);
+        box-shadow: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-top: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(216, 225, 239, 0.8);
+        border-radius: var(--radius-lg);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        transform: translateY(8px);
+        opacity: 0;
+        animation: cardIn 0.7s ease forwards;
+      }
+
+      .panel:nth-of-type(1) { animation-delay: 0.05s; }
+      .panel:nth-of-type(2) { animation-delay: 0.12s; }
+      .panel:nth-of-type(3) { animation-delay: 0.19s; }
+      .panel:nth-of-type(4) { animation-delay: 0.26s; }
+
+      .panel:hover {
+        transform: translateY(4px);
+        box-shadow: 0 22px 44px rgba(15, 23, 42, 0.14);
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, rgba(29, 78, 216, 0.7), rgba(15, 118, 110, 0.7));
+        opacity: 0.6;
+      }
+
+      .panel::after {
+        content: "";
+        position: absolute;
+        right: -60px;
+        top: -60px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(15, 118, 110, 0.16), transparent 70%);
+        z-index: 0;
+      }
+
+      .panel > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .panel h2 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1.35rem;
+        margin-bottom: 4px;
+        letter-spacing: -0.01em;
+      }
+
+      .panel-head {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+
+      .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .panel-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(15, 118, 110, 0.12);
+        color: #0f766e;
+      }
+
+      .panel-subtitle {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      input, select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid rgba(216, 225, 239, 0.9);
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        background: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: rgba(29, 78, 216, 0.6);
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+      }
+
+      input[type="file"] {
+        padding: 10px 12px;
+        background: linear-gradient(120deg, rgba(29, 78, 216, 0.08), rgba(15, 118, 110, 0.08));
+        border: 1px dashed rgba(29, 78, 216, 0.35);
+        color: var(--slate);
+        cursor: pointer;
+      }
+
+      input[type="file"]::file-selector-button {
+        margin-right: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input[type="file"]::file-selector-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(29, 78, 216, 0.2);
+      }
+
+      input[type="file"]:hover {
+        border-color: rgba(29, 78, 216, 0.55);
+        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.08);
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 0.92rem;
+        color: var(--slate);
+        min-height: 20px;
+      }
+
+      .list {
+        margin-top: 12px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .list-item {
+        border: 1px solid rgba(216, 225, 239, 0.8);
+        border-radius: var(--radius-md);
+        padding: 10px 12px;
+        background: #fff;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        display: grid;
+        gap: 4px;
+        animation: fadeUp 0.4s ease;
+      }
+
+      .is-hidden {
+        display: none;
+      }
+
+
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-size: 0.75rem;
+        margin-top: 4px;
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding: 28px 16px 60px;
+        }
+
+        header.topbar {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes riseIn {
+        from { transform: translateY(12px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes cardIn {
+        from { transform: translateY(16px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes fadeUp {
+        from { transform: translateY(6px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      @keyframes floatGlow {
+        0% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(12px) scale(1.02); }
+        100% { transform: translateY(0) scale(1); }
+      }
+
+      .chat-widget {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 10;
+        width: min(360px, calc(100vw - 48px));
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(216, 225, 239, 0.9);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14);
+        overflow: hidden;
+        display: none;
+      }
+
+      .chat-widget.open {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        animation: cardIn 0.4s ease;
+      }
+
+      .chat-header {
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, rgba(29, 78, 216, 0.1), rgba(15, 118, 110, 0.12));
+        border-bottom: 1px solid rgba(216, 225, 239, 0.8);
+      }
+
+      .chat-title {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.98rem;
+        font-weight: 700;
+      }
+
+      .chat-body {
+        padding: 12px 14px;
+        max-height: 320px;
+        overflow-y: auto;
+        display: grid;
+        gap: 10px;
+        background: #f8fafc;
+      }
+
+      .chat-bubble {
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 0.92rem;
+        line-height: 1.4;
+        max-width: 85%;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .chat-bubble.user {
+        background: #e0f2fe;
+        color: #0b4f6c;
+        justify-self: end;
+      }
+
+      .chat-bubble.bot {
+        background: #fff;
+        color: var(--ink);
+        justify-self: start;
+      }
+
+      .chat-input {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding: 12px 14px;
+        border-top: 1px solid rgba(216, 225, 239, 0.8);
+        background: #fff;
+      }
+
+      .chat-input input {
+        padding: 10px 12px;
+        border-radius: 999px;
+      }
+
+      .chat-toggle {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 11;
+        border-radius: 999px;
+        padding: 12px 16px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(29, 78, 216, 0.2);
+      }
+
+      .threat-banner {
+        position: fixed;
+        right: 24px;
+        bottom: 92px;
+        z-index: 9;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.96));
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.22);
+        max-width: 360px;
+      }
+
+      .threat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(14, 165, 233, 0.18);
+        color: #38bdf8;
+        font-size: 1.1rem;
+      }
+
+      .threat-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .threat-subtitle {
+        font-size: 0.78rem;
+        color: #cbd5f5;
+      }
+
+      .threat-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 4px;
+      }
+
+      .threat-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #38bdf8;
+      }
+
+      .threat-dot.low {
+        background: #22c55e;
+      }
+
+      .threat-dot.medium {
+        background: #f59e0b;
+      }
+
+      .threat-dot.high {
+        background: #ef4444;
+      }
+
+      @media (max-width: 720px) {
+        .chat-widget,
+        .chat-toggle {
+          right: 16px;
+          bottom: 16px;
+        }
+
+        .threat-banner {
+          right: 16px;
+          bottom: 84px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="title-block">
+          <div class="eyebrow">Secure Operations</div>
+          <h1>Operations Console</h1>
+          <p class="subtitle">Upload, verify, and audit document activity in a single control panel.</p>
+        </div>
+        <div class="toolbar">
+          <button class="btn ghost" id="logout-btn">Log out</button>
+        </div>
+      </header>
+
+      <section class="grid">
+        <div class="panel admin-only" id="user-management-panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <h2>User Management</h2>
+              <span class="panel-badge">Access</span>
+            </div>
+            <div class="panel-subtitle">Provision roles, clearances, and credentials.</div>
+          </div>
+          <label for="new-user">New username</label>
+          <input id="new-user" placeholder="officer01" />
+          <label for="new-pass" style="margin-top: 10px;">New password</label>
+          <input id="new-pass" type="password" placeholder="min 8 chars" />
+          <label for="new-role" style="margin-top: 10px;">Role</label>
+          <select id="new-role">
+            <option value="UNCLASSIFIED">UNCLASSIFIED</option>
+            <option value="RESTRICTED">RESTRICTED</option>
+            <option value="CONFIDENTIAL">CONFIDENTIAL</option>
+            <option value="SECRET">SECRET</option>
+            <option value="TOP_SECRET">TOP_SECRET</option>
+          </select>
+          <label for="new-clearance" style="margin-top: 10px;">Clearance (auto)</label>
+          <input id="new-clearance" type="number" min="1" max="5" value="3" readonly />
+          <button class="btn secondary" id="create-user-btn" style="margin-top: 12px;">Create user</button>
+          <div class="status" id="user-status"></div>
+        </div>
+
+        <div class="panel admin-only" id="audit-ledger-panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <h2>Document Intake</h2>
+              <span class="panel-badge">Upload</span>
+            </div>
+            <div class="panel-subtitle">Encrypt files and set required clearance.</div>
+          </div>
+          <label for="file-input">Document file</label>
+          <input id="file-input" type="file" />
+          <label for="clearance-input" style="margin-top: 10px;">Required clearance (1-5)</label>
+          <input id="clearance-input" type="number" min="1" max="5" value="3" />
+          <button class="btn" id="upload-btn" style="margin-top: 12px;">Upload and encrypt</button>
+          <div class="status" id="upload-status"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <h2>Registry & Verification</h2>
+              <span class="panel-badge">Integrity</span>
+            </div>
+            <div class="panel-subtitle">Review status and validate hashes.</div>
+          </div>
+          <button class="btn ghost" id="refresh-docs">Refresh registry</button>
+          <div class="list" id="doc-list"></div>
+          <label for="doc-select" style="margin-top: 10px;">Select document</label>
+          <select id="doc-select"></select>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <button class="btn" id="verify-btn">Verify integrity</button>
+            <button class="btn secondary" id="access-btn">Request access</button>
+          </div>
+          <div class="status" id="verify-status"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">
+              <h2>Audit Ledger</h2>
+              <span class="panel-badge">Chain</span>
+            </div>
+            <div class="panel-subtitle">Inspect actions and verify the ledger.</div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn ghost" id="audit-btn">Load ledger</button>
+            <button class="btn secondary" id="audit-verify-btn">Verify chain</button>
+          </div>
+          <div class="list" id="audit-list"></div>
+          <div class="status" id="audit-status"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="threat-banner">
+      <div class="threat-icon">🤖</div>
+      <div>
+        <div class="threat-title">AI-Based Threat Detection</div>
+        <div class="threat-subtitle" id="threat-subtitle">Detects unusual access & insider threats</div>
+        <div class="threat-status">
+          <span class="threat-dot low" id="threat-dot"></span>
+          <span id="threat-level">Low Risk</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="chat-toggle" id="chat-toggle">Chat</button>
+    <div class="chat-widget" id="chat-widget">
+      <div class="chat-header">
+        <div class="chat-title">Access Assistant</div>
+        <button class="btn ghost" id="chat-close">Close</button>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="chat-bubble bot">Ask about who can access a document, clearance, or file metadata.</div>
+      </div>
+      <div class="chat-input">
+        <input id="chat-input" placeholder="Ask about access or clearance..." />
+        <button class="btn" id="chat-send">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const state = {
+        accessToken: localStorage.getItem("accessToken") || "",
+        refreshToken: localStorage.getItem("refreshToken") || "",
+        documents: []
+      };
+
+      if (!state.accessToken) {
+        window.location.href = "/";
+      }
+
+      function parseJwt(token) {
+        try {
+          const payload = token.split(".")[1];
+          const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+          const decoded = atob(normalized);
+          return JSON.parse(decoded);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function applyAdminVisibility() {
+        const payload = parseJwt(state.accessToken);
+        const role = payload && payload.role ? payload.role : "";
+        const adminLogin = localStorage.getItem("adminLogin") === "true";
+        const isAdmin = role === "TOP_SECRET" || adminLogin;
+        document.querySelectorAll(".admin-only").forEach((el) => {
+          if (!isAdmin) {
+            el.classList.add("is-hidden");
+          }
+        });
+      }
+
+
+      function setStatus(id, message) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = message;
+        }
+      }
+
+      async function api(path, options = {}) {
+        const headers = options.headers || {};
+        if (state.accessToken) {
+          headers.Authorization = `Bearer ${state.accessToken}`;
+        }
+        const response = await fetch(path, { ...options, headers });
+        const contentType = response.headers.get("content-type") || "";
+        const payload = contentType.includes("application/json") ? await response.json() : await response.text();
+        if (!response.ok) {
+          const message = payload && payload.message ? payload.message : "Request failed";
+          throw new Error(message);
+        }
+        return payload;
+      }
+
+      const roleToClearance = {
+        UNCLASSIFIED: 1,
+        RESTRICTED: 2,
+        CONFIDENTIAL: 3,
+        SECRET: 4,
+        TOP_SECRET: 5
+      };
+
+      function syncClearance() {
+        const role = document.getElementById("new-role").value;
+        const level = roleToClearance[role] || 1;
+        document.getElementById("new-clearance").value = String(level);
+      }
+
+      async function createUser() {
+        try {
+          const username = document.getElementById("new-user").value.trim();
+          const password = document.getElementById("new-pass").value;
+          const role = document.getElementById("new-role").value;
+          const clearanceLevel = Number(document.getElementById("new-clearance").value || 1);
+
+          const result = await api("/auth/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password, role, clearanceLevel })
+          });
+          setStatus("user-status", `User created: ${result.user.username}`);
+        } catch (error) {
+          setStatus("user-status", error.message);
+        }
+      }
+
+      async function uploadDocument() {
+        const fileInput = document.getElementById("file-input");
+        const clearanceInput = document.getElementById("clearance-input");
+        if (!fileInput.files.length) {
+          setStatus("upload-status", "Select a file first.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("document", fileInput.files[0]);
+        formData.append("requiredClearance", clearanceInput.value || "2");
+
+        try {
+          const result = await api("/documents/upload", {
+            method: "POST",
+            body: formData
+          });
+          setStatus("upload-status", `Uploaded ${result.document.filename}`);
+          await loadDocuments();
+        } catch (error) {
+          setStatus("upload-status", error.message);
+        }
+      }
+
+      function renderDocuments(list) {
+        const container = document.getElementById("doc-list");
+        const select = document.getElementById("doc-select");
+        container.innerHTML = "";
+        select.innerHTML = "";
+        list.forEach((doc) => {
+          const item = document.createElement("div");
+          item.className = "list-item";
+          item.innerHTML = `
+            <div><strong>${doc.filename}</strong></div>
+            <div class="pill">${doc.status}</div>
+            <div>Clearance ${doc.required_clearance} | ${doc.size_bytes} bytes</div>
+          `;
+          container.appendChild(item);
+
+          const option = document.createElement("option");
+          option.value = doc.id;
+          option.textContent = `${doc.filename} (${doc.status})`;
+          select.appendChild(option);
+        });
+      }
+
+      async function loadDocuments() {
+        try {
+          const result = await api("/documents");
+          state.documents = result.documents || [];
+          renderDocuments(state.documents);
+        } catch (error) {
+          setStatus("verify-status", error.message);
+        }
+      }
+
+      async function verifySelected() {
+        const docId = document.getElementById("doc-select").value;
+        if (!docId) {
+          setStatus("verify-status", "Select a document first.");
+          return;
+        }
+        try {
+          const result = await api(`/documents/${docId}/verify`, { method: "POST" });
+          setStatus("verify-status", `Verification: ${result.status}`);
+          await loadDocuments();
+        } catch (error) {
+          setStatus("verify-status", error.message);
+        }
+      }
+
+      async function requestAccess() {
+        const docId = document.getElementById("doc-select").value;
+        if (!docId) {
+          setStatus("verify-status", "Select a document first.");
+          return;
+        }
+        try {
+          const result = await api("/access/request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ documentId: docId })
+          });
+          const status = result.granted ? "Granted" : "Denied";
+          setStatus("verify-status", `${status}. Approval: ${result.approvalId}`);
+          if (result.granted) {
+            await downloadDocument(docId);
+          }
+        } catch (error) {
+          setStatus("verify-status", error.message);
+        }
+      }
+
+      async function downloadDocument(docId) {
+        const response = await fetch(`/documents/${docId}/download`, {
+          headers: {
+            Authorization: `Bearer ${state.accessToken}`
+          }
+        });
+
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(message || "Download failed");
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank", "noopener");
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      }
+
+      async function loadAudit() {
+        try {
+          const result = await api("/audit/ledger");
+          const container = document.getElementById("audit-list");
+          container.innerHTML = "";
+          result.chain.forEach((block) => {
+            const item = document.createElement("div");
+            item.className = "list-item";
+            item.innerHTML = `
+              <div><strong>${block.action}</strong> - ${block.status}</div>
+              <div>User: ${block.username} | Clearance ${block.clearance_level}</div>
+              <div>Approval ${block.approval_id}</div>
+            `;
+            container.appendChild(item);
+          });
+          setStatus("audit-status", `Loaded ${result.chain.length} records.`);
+        } catch (error) {
+          setStatus("audit-status", error.message);
+        }
+      }
+
+      async function verifyAudit() {
+        try {
+          const result = await api("/audit/verify");
+          const message = result.valid ? `Chain OK (${result.length} blocks)` : `Chain failed at ${result.failedAt}`;
+          setStatus("audit-status", message);
+        } catch (error) {
+          setStatus("audit-status", error.message);
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("adminLogin");
+        window.location.href = "/";
+      }
+
+      function applyThreatLevel(level, summary) {
+        const dot = document.getElementById("threat-dot");
+        const label = document.getElementById("threat-level");
+        const subtitle = document.getElementById("threat-subtitle");
+        if (!dot || !label || !subtitle) {
+          return;
+        }
+
+        dot.className = "threat-dot";
+        const levelKey = String(level || "low").toLowerCase();
+        dot.classList.add(levelKey);
+        label.textContent = `${level || "Low"} Risk`;
+        if (summary) {
+          subtitle.textContent = summary;
+        }
+      }
+
+      async function loadThreatSummary() {
+        try {
+          const result = await api("/threats/summary");
+          applyThreatLevel(result.status, result.summary);
+        } catch (error) {
+          applyThreatLevel("Low", "Threat detection unavailable.");
+        }
+      }
+
+      function appendChatBubble(text, role) {
+        const body = document.getElementById("chat-body");
+        const bubble = document.createElement("div");
+        bubble.className = `chat-bubble ${role}`;
+        bubble.textContent = text;
+        body.appendChild(bubble);
+        body.scrollTop = body.scrollHeight;
+      }
+
+      async function sendChat() {
+        const input = document.getElementById("chat-input");
+        const question = input.value.trim();
+        if (!question) {
+          return;
+        }
+
+        appendChatBubble(question, "user");
+        input.value = "";
+
+        const documentId = document.getElementById("doc-select").value || undefined;
+        try {
+          const result = await api("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question, documentId })
+          });
+          appendChatBubble(result.answer || "No answer", "bot");
+        } catch (error) {
+          appendChatBubble(error.message || "Chat error", "bot");
+        }
+      }
+
+      document.getElementById("logout-btn").addEventListener("click", logout);
+      document.getElementById("create-user-btn").addEventListener("click", createUser);
+      document.getElementById("new-role").addEventListener("change", syncClearance);
+      document.getElementById("upload-btn").addEventListener("click", uploadDocument);
+      document.getElementById("refresh-docs").addEventListener("click", loadDocuments);
+      document.getElementById("verify-btn").addEventListener("click", verifySelected);
+      document.getElementById("access-btn").addEventListener("click", requestAccess);
+      document.getElementById("audit-btn").addEventListener("click", loadAudit);
+      document.getElementById("audit-verify-btn").addEventListener("click", verifyAudit);
+
+      const chatWidget = document.getElementById("chat-widget");
+      const chatToggle = document.getElementById("chat-toggle");
+      const chatClose = document.getElementById("chat-close");
+      const chatSend = document.getElementById("chat-send");
+      const chatInput = document.getElementById("chat-input");
+
+      chatToggle.addEventListener("click", () => {
+        chatWidget.classList.add("open");
+        chatToggle.style.display = "none";
+      });
+
+      chatClose.addEventListener("click", () => {
+        chatWidget.classList.remove("open");
+        chatToggle.style.display = "inline-flex";
+      });
+
+      chatSend.addEventListener("click", sendChat);
+      chatInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          sendChat();
+        }
+      });
+
+      syncClearance();
+      applyAdminVisibility();
+      loadThreatSummary();
+      setInterval(loadThreatSummary, 60000);
+      loadDocuments();
+    </script>
+  </body>
+</html>
